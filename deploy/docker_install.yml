@@ -1,0 +1,51 @@
+---
+
+- hosts: all
+  become: yes
+  tasks:
+   - name: install python and dependencies on redhats
+     yum: name=python3-pip state=present  update_cache=yes
+     when: ansible_os_family == "RedHat"
+
+   - name: install python and dependencies on debians
+     apt: name=python3-pip state=present update_cache=yes
+     when: ansible_os_family == "Debian"
+
+   - name: install python modules
+     shell: pip3 install requests
+
+   - name: install python modules2
+     shell: pip3 install bs4
+
+   - name: copy shecan python script to setting DNS [using shecan.ir ips]
+     copy:
+       src: shecan.py
+       dest: /root/shecan.py
+   - name: execute python script and change dns resolve conf file
+     shell: python3 /root/shecan.py
+
+   - name: remove old docker in redhat
+     shell: yum remove -y docker-ce && rm -rf /var/lib/docker && yum remove -y docker-ce-cli && yum -y autoremove
+     when: ansible_os_family == "RedHat"
+
+   - name: remove old docker in debians
+     shell:  apt-get install apt-transport-https ca-certificates curl gnupg-agent software-properties-common
+     when: ansible_os_family == "Debian"
+
+   - name: replace shecan resolv conf with our default resolv conf
+     shell: mv -f /tmp/resolv.conf /etc/resolv.conf
+
+   - name: install docker at end
+     shell: curl -fsSL https://get.docker.com -o get-docker.sh && sh get-docker.sh
+     register: results
+
+   - name: show results
+     debug: msg={{ results.stdout_lines }} 
+    
+   - name: start docker docker service
+     service: name=docker state=started  enabled=yes
+     register: result
+
+   - name: show starting result
+     debug: msg={{ result }}
+

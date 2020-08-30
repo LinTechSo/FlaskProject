@@ -1,0 +1,18 @@
+---
+
+- hosts: all
+  become: yes
+  gather_facts: no
+
+  pre_tasks:
+    - import_tasks: docker_install.yml
+
+  tasks:
+    - name: run the service defined in my_project's docker-compose.yml
+      docker_service:
+        project_src: analyze-project/
+        build: yes
+      register: output
+
+    - name: show output of docker-compose executation
+      debug: msg={{ output.stdout_lines }}
