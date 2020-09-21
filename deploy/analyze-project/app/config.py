@@ -5,8 +5,8 @@ API_KEY = 'put your API key from kavenegar here'
 # Mysql configs
 MYSQL_HOST = 'db'
 MYSQL_PORT= 3306
-MYSQL_USERNAME = 'root'
-MYSQL_PASSWORD = 'Azahmadi@4466'
+MYSQL_USERNAME = 'parham'
+MYSQL_PASSWORD = 'secret'
 MYSQL_DB_NAME = 'flask'
 
 # call back url from KaveNegar will look like
